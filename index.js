@@ -42,9 +42,16 @@ function loadID(id) {
 }
 
 //tipos
-function loadTypes(name) {
+function loadTypes(types) {
     const typesTag = document.getElementById("types")
-    typesTag.innerHTML = `${name}`;
+    const pokeType = types.map(t => `<span>${t.type.name} </span>`).join('');    
+    if (types[1] == null){
+        typesTag.innerHTML = pokeType;
+        console.log(types.map(t => `${t.type.name}`));
+    }else {
+        typesTag.innerHTML = pokeType;
+        console.log(types.map(t => `${t.type.name}`))
+    }
 }
 
 //stats
