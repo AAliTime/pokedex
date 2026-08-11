@@ -1,0 +1,25 @@
+:root {
+
+    /*titles*/
+    --tColor: Red;
+
+    /*paragraphs*/
+    --pColor: black;
+    --pAlign: left;
+}
+
+.pokedexWrapper {
+    width: 200;
+    width: 100%;
+    height: 100%;
+    background: #73b5cf;    
+    border-radius: 5px;
+    border: solid;
+    text-align: center;
+
+}
+
+body {
+    color: var(--pColor);
+    text-align: var(--pAlign);
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex-lite!</title>
+    <link rel="shortcut icon" href="./bola.png" type="image/x-icon"> 
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="pokedexWrapper">
+        <div class="pokemonSpr"><p>img</p><img id="pokemonImage" src=""></div>
+        <div class="pokemonName"><h1 id="name">Nombre</h1></div>
+        <div class="pokemonID"><h1 id="identification">ID</h1></div>
+        <div class="pokemonTypes"><h1 id="types">Tipos</h1></div>
+        <div class="pokemonStats"><h1 id="stats">Estadísticas</h1></div>
+            <p id="hp">HP</p>
+            <p id="attack">Ataque</p>
+            <p id="defense">Defensa</p>
+            <p id="attack">Atq. Especial</p>
+            <p id="defense">Def. Especial</p>
+            <p id="Speed">Velocidad</p>
+
+        <div class="pokemonSearch">
+            <input type="text" id="pokemonInput" placeholder="Search">
+            <button onclick="search()">Buscar pokemon</button>
+        </div>
+
+    </div>
+    <script src="./index.js"></script>
+
+</body>
+</html>
