@@ -57,20 +57,39 @@ function loadTypes(types) {
 //stats
 function loadStats(stats) {
     const statsTag = document.getElementById("stats")
-    statsTag.innerHTML = `${stats}`;
+    const pokeStats = stats.map(s =>
+        `<span>${s.stat.name}: ${s.base_stat}    </span>`).join('');
+    statsTag.innerHTML = pokeStats;
+}
+
+function loadSprite(spr) {
+    const spriteTag = document.getElementById("sprite");
+    const SPR = spr.sprites.front_default;
+    spriteTag.innerHTML = `<img src="${SPR}">`
 }
 
 async function search() {
     const CONTENT = document.getElementById("pokemonInput").value;
 
     if (!CONTENT) return;
+    const loading = document.getElementById("loading");
+    loading.innerHTML = "Cargando..."
 
     try {        
+
         const POKEMON = await getPokemon(CONTENT);
+        loadSprite(POKEMON);
         loadName(POKEMON.name);
         loadID(POKEMON.id);
         loadTypes(POKEMON.types);
+        loadStats(POKEMON.stats);
+
+        loading.innerHTML = " "
+
+
+
     }catch (error){
+        loading.innerHTML = "Pokémon no existe!!!"
         console.error('Error al obtener pokémon', error.message)
         throw error;
     }
