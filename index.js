@@ -30,14 +30,14 @@ async function getPokemon(nombre) {
 //nombre
 function loadName(name) {
     const nameTag = document.getElementById("name")
-    nameTag.innerHTML = `${name}`;
+    nameTag.innerHTML = `Name: ${name}`;
     console.log(`${name}`)
 }
 
 //id
 function loadID(id) {
     const idTag = document.getElementById("identification")
-    idTag.innerHTML = `${id}`;
+    idTag.innerHTML = `ID: ${id}`;
     console.log(id);
 }
 
@@ -46,10 +46,10 @@ function loadTypes(types) {
     const typesTag = document.getElementById("types")
     const pokeType = types.map(t => `<span>${t.type.name} </span>`).join('');    
     if (types[1] == null){
-        typesTag.innerHTML = pokeType;
+        typesTag.innerHTML = `type: ${pokeType}`;
         console.log(types.map(t => `${t.type.name}`));
     }else {
-        typesTag.innerHTML = pokeType;
+        typesTag.innerHTML = `types: ${pokeType}`;
         console.log(types.map(t => `${t.type.name}`))
     }
 }
