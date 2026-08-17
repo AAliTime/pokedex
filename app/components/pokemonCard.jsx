@@ -1,72 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import { useFetch } from "../hooks/useFetch";
+import { pokemonService } from "../services/fetchPokemon";
 
-export default function PokemonCard({ pokemon, onSelect }) {
-  const [isShiny, setIsShiny] = useState(false);
+export default function PokemonCard({ url, onSelect }) {
+  const { data: pokemon, loading } = useFetch(
+    () => pokemonService.getPokemonByUrl(url),
+    [url]
+  );
 
-  const defaultSprite = pokemon.sprites?.front_default || "/favicon.ico";
-  const shinySprite = pokemon.sprites?.front_shiny || defaultSprite;
-
-  const handleCardClick = (e) => {
-    e.stopPropagation();
-    console.log("Card clicked for:", pokemon.name);
-    if (onSelect) {
-      onSelect(pokemon);
-    }
-  };
+  if (loading || !pokemon) {
+    return (
+      <div className="bg-zinc-800 border border-zinc-700 rounded-lg p-4 h-48 animate-pulse flex items-center justify-center text-zinc-500 text-sm">
+        Loading...
+      </div>
+    );
+  }
 
   return (
-    <div className="pokemon-card" onClick={handleCardClick}>
-      {/* Shiny Toggle Button */}
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation();
-          setIsShiny(!isShiny);
-        }}
-        className={`shiny-btn ${isShiny ? "active" : ""}`}
-        title="Toggle Shiny Sprite"
-      >
-        ✨
-      </button>
-
-      {/* Pokémon Image */}
-      <div className="pokemon-sprite-wrapper">
-        <img
-          src={isShiny ? shinySprite : defaultSprite}
-          alt={pokemon.name}
-          className="pokemon-sprite"
-          onError={(e) => {
-            e.currentTarget.src =
-              "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png";
-          }}
-        />
-      </div>
-
-      {/* Info */}
-      <span className="pokemon-id">
-        #{String(pokemon.id || 0).padStart(3, "0")}
+    <div
+      onClick={() => onSelect(pokemon.name)}
+      className="bg-zinc-800 border border-zinc-700 rounded-lg p-4 cursor-pointer hover:border-amber-400 transition-all text-white text-center shadow-md flex flex-col items-center justify-between"
+    >
+      <span className="text-xs text-amber-400 font-bold self-end">
+        #{String(pokemon.id).padStart(3, "0")}
       </span>
-      <h3 className="pokemon-name">{pokemon.name}</h3>
 
-      {/* Types */}
-      <div className="pokemon-types">
-        {pokemon.types?.map((typeInfo) => (
-          <span key={typeInfo.type.name} className="type-badge">
-            {typeInfo.type.name}
+      <img
+        src={pokemon.sprites?.front_default || ""}
+        alt={pokemon.name}
+        className="w-28 h-28 object-contain my-2"
+      />
+
+      <h3 className="capitalize font-bold text-lg">{pokemon.name}</h3>
+
+      <div className="flex gap-1 justify-center mt-2">
+        {pokemon.types?.map((t) => (
+          <span
+            key={t.type.name}
+            className="text-xs px-2 py-0.5 bg-zinc-700 text-zinc-300 rounded-full capitalize"
+          >
+            {t.type.name}
           </span>
         ))}
       </div>
-
-      {/* Action Button */}
-      <button
-        type="button"
-        className="view-details-btn"
-        onClick={handleCardClick}
-      >
-        View Details
-      </button>
     </div>
   );
 }

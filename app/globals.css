@@ -385,3 +385,76 @@
   background-color: #52525b;
   border-color: #71717a;
 }
+
+/* Compare Module Styles */
+.compare-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.compare-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.compare-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--foreground, #ffffff);
+}
+
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .compare-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.compare-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: var(--card-bg, #18181b);
+  border: 1px solid var(--border-color, #27272a);
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+/* Favorite Button Styles */
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.favorite-btn {
+  background-color: var(--card-bg, #18181b);
+  border: 1px solid var(--border-color, #27272a);
+  color: var(--foreground, #ffffff);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.favorite-btn:hover {
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+
+.favorite-btn.active {
+  background-color: #f59e0b;
+  color: #000000;
+  border-color: #f59e0b;
+}

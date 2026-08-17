@@ -3,11 +3,11 @@
 import { useState } from "react";
 import PokemonCard from "./pokemonCard";
 import PokemonFilter from "./pokemonFilter";
-import PokemonDetails from "./pokemonDetails"; // Note: lowercase 'p' in filename
+import PokemonDetails from "./pokemonDetails";
 import { fetchPokemonPage } from "@/app/services/fetchPokemon";
 
 export default function PokemonGrid({ initialPokemon }) {
-  const [pokemonList, setPokemonList] = useState(initialPokemon);
+  const [pokemonList, setPokemonList] = useState(initialPokemon || []);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState("all");
   const [selectedPokemon, setSelectedPokemon] = useState(null);
@@ -59,7 +59,10 @@ export default function PokemonGrid({ initialPokemon }) {
               <PokemonCard
                 key={pokemon.id || pokemon.name}
                 pokemon={pokemon}
-                onSelect={(p) => setSelectedPokemon(p)}
+                onSelect={(p) => {
+                  console.log("Setting selected pokemon in grid:", p);
+                  setSelectedPokemon(p);
+                }}
               />
             ))}
           </div>
@@ -78,13 +81,11 @@ export default function PokemonGrid({ initialPokemon }) {
         </>
       )}
 
-      {/* Render Modal */}
-      {selectedPokemon && (
-        <PokemonDetails
-          pokemon={selectedPokemon}
-          onClose={() => setSelectedPokemon(null)}
-        />
-      )}
+      {/* Render Modal outside of any grid conditional branches */}
+      <PokemonDetails
+        pokemon={selectedPokemon}
+        onClose={() => setSelectedPokemon(null)}
+      />
     </div>
   );
 }

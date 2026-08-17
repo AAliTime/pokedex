@@ -38,14 +38,6 @@ def createUser(credentials: UserCreate) -> UserResponse:
         json.dump(data, jsonData, indent=4)
     return newUser                  #type: ignore
 
-""" testeando queries
-@app.get("/users")
-def readUsers(limit: int = None):   #type: ignore
-    if limit: 
-        return list(data.values())[:limit]
-    return data
-"""
-
 subapp = FastAPI(
     title="Pokédex API",
     description="Información de todos los pokémon",

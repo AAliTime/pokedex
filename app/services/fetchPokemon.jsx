@@ -1,28 +1,30 @@
-import axios from "axios";
+import api from "../api"; 
 
-const API_BASE = "https://pokeapi.co/api/v2";
+export const pokemonService = {
+  getPokemonPage: async (limit = 20, offset = 0) => {
+    const response = await api.get(`/pokemon?limit=${limit}&offset=${offset}`);
+    return response.data;
+  },
 
-export async function fetchPokemonPage(limit = 20, offset = 0) {
-  try {
-    // 1. Fetch main page list
-    const listRes = await axios.get(
-      `${API_BASE}/pokemon?limit=${limit}&offset=${offset}`
-    );
+  getPokemonByType: async (typeName) => {
+    const response = await api.get(`/type/${typeName}`);
+    return response.data;
+  },
 
-    // 2. Fetch full details sequentially or with standard Promise.all
-    const pokemonDetailsPromises = listRes.data.results.map(async (item) => {
-      const res = await axios.get(item.url);
-      return res.data;
-    });
+  getPokemonByName: async (nameOrId) => {
+    const response = await api.get(`/pokemon/${String(nameOrId).toLowerCase()}`);
+    return response.data;
+  },
 
-    const results = await Promise.all(pokemonDetailsPromises);
+  getPokemonByUrl: async (url) => {
+    const response = await api.get(url);
+    return response.data;
+  },
 
-    return {
-      results,
-      next: listRes.data.next,
-    };
-  } catch (error) {
-    console.error("Error fetching Pokémon data:", error);
-    return { results: [] };
-  }
-}
+  getTypes: async () => {
+    const response = await api.get(`/type`);
+    return response.data;
+  },
+
+  getPokemonUrlByName: (name) => `/pokemon/${name}`,
+};
