@@ -29,7 +29,6 @@ export default function PokemonFilter({
 }) {
   return (
     <div className="filter-container">
-      {/* Search Input */}
       <input
         type="text"
         placeholder="Search Pokémon..."
@@ -38,7 +37,6 @@ export default function PokemonFilter({
         className="filter-input"
       />
 
-      {/* Type Dropdown */}
       <select
         value={selectedType}
         onChange={(e) => setSelectedType(e.target.value)}

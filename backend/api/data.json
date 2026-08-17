@@ -1,32 +1,32 @@
 {
     "users": [
         {
-            "username": "string",
-            "password": "string"
+            "username": "wachi",
+            "password": "wa",
+            "favorites": [
+                "ivysaur",
+                "bulbasaur",
+                "weedle"
+            ]
         },
         {
-            "username": "help",
-            "password": "me"
-        },
-        {
-            "username": "god",
-            "password": "damnit"
-        },
-        {
-            "username": "Maria",
-            "password": "ujapprofe1"
+            "username": "wachiwa",
+            "password": "wa",
+            "favorites": [
+                "wartortle",
+                "blastoise",
+                "caterpie"
+            ]
         },
         {
             "username": "ali",
-            "password": "ali2"
-        },
-        {
-            "username": "what",
-            "password": "que"
-        },
-        {
-            "username": "hatsune",
-            "password": "miku"
+            "password": "time",
+            "favorites": [
+                "bulbasaur",
+                "ivysaur",
+                "charmander",
+                "charmeleon"
+            ]
         }
     ]
 }

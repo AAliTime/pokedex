@@ -29,7 +29,6 @@ export function useFetch(fetchFn, deps = []) {
     return () => {
       isMounted = false;
     };
-  // deps controls when the effect actually refetches
   }, deps);
 
   return { data, loading, error };

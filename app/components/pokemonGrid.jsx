@@ -7,7 +7,7 @@ import PokemonDetails from "./pokemonDetails";
 import { fetchPokemonPage } from "@/app/services/fetchPokemon";
 
 export default function PokemonGrid({ initialPokemon }) {
-  const [pokemonList, setPokemonList] = useState(initialPokemon || []);
+  const [pokemonList, setPokemonList] = useState(initialPokemon);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState("all");
   const [selectedPokemon, setSelectedPokemon] = useState(null);
@@ -57,12 +57,9 @@ export default function PokemonGrid({ initialPokemon }) {
           <div className="pokedex-grid">
             {filteredPokemon.map((pokemon) => (
               <PokemonCard
-                key={pokemon.id || pokemon.name}
+                key={pokemon.id}
                 pokemon={pokemon}
-                onSelect={(p) => {
-                  console.log("Setting selected pokemon in grid:", p);
-                  setSelectedPokemon(p);
-                }}
+                onSelect={(p) => setSelectedPokemon(p)}
               />
             ))}
           </div>
@@ -81,7 +78,6 @@ export default function PokemonGrid({ initialPokemon }) {
         </>
       )}
 
-      {/* Render Modal outside of any grid conditional branches */}
       <PokemonDetails
         pokemon={selectedPokemon}
         onClose={() => setSelectedPokemon(null)}

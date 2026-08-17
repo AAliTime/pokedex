@@ -1,45 +1,101 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useFetch } from "../hooks/useFetch";
 import { pokemonService } from "../services/fetchPokemon";
+import { authService } from "../services/authService";
 
-export default function PokemonCard({ url, onSelect }) {
+export default function PokemonCard({ url, user, onSelect }) {
+  const [isFavorite, setIsFavorite] = useState(false);
+
   const { data: pokemon, loading } = useFetch(
     () => pokemonService.getPokemonByUrl(url),
     [url]
   );
 
+  useEffect(() => {
+    if (!pokemon || !user) {
+      setIsFavorite(false);
+      return;
+    }
+
+    const storageKey = `pokedex_favorites_${user}`;
+    const favorites = JSON.parse(localStorage.getItem(storageKey) || "[]");
+    setIsFavorite(favorites.includes(pokemon.name));
+  }, [pokemon, user]);
+
+  const toggleFavorite = async (e) => {
+    e.stopPropagation(); 
+
+    if (!user) {
+      alert("Inicia sesión para guardar favoritos por fa pls");
+      return;
+    }
+
+    const storageKey = `pokedex_favorites_${user}`;
+    const currentFavorites = JSON.parse(
+      localStorage.getItem(storageKey) || "[]"
+    );
+
+    let updatedFavorites;
+    if (currentFavorites.includes(pokemon.name)) {
+      updatedFavorites = currentFavorites.filter(
+        (name) => name !== pokemon.name
+      );
+      setIsFavorite(false);
+    } else {
+      updatedFavorites = [...currentFavorites, pokemon.name];
+      setIsFavorite(true);
+    }
+
+    localStorage.setItem(storageKey, JSON.stringify(updatedFavorites));
+
+    try {
+      await authService.updateFavorites(user, updatedFavorites);
+    } catch (error) {
+      console.error("Failed to update backend favorites:", error);
+    }
+  };
+
   if (loading || !pokemon) {
     return (
-      <div className="bg-zinc-800 border border-zinc-700 rounded-lg p-4 h-48 animate-pulse flex items-center justify-center text-zinc-500 text-sm">
+      <div className="pokemon-card h-48 justify-center text-zinc-500 text-sm">
         Loading...
       </div>
     );
   }
 
   return (
-    <div
-      onClick={() => onSelect(pokemon.name)}
-      className="bg-zinc-800 border border-zinc-700 rounded-lg p-4 cursor-pointer hover:border-amber-400 transition-all text-white text-center shadow-md flex flex-col items-center justify-between"
-    >
-      <span className="text-xs text-amber-400 font-bold self-end">
-        #{String(pokemon.id).padStart(3, "0")}
-      </span>
+    <div className="pokemon-card" onClick={() => onSelect(pokemon.name)}>
+      <div className="w-full flex justify-between items-center mb-1">
+        <button
+          onClick={toggleFavorite}
+          className={`text-lg transition-transform active:scale-125 ${
+            isFavorite ? "text-amber-400" : "text-zinc-500 hover:text-amber-400"
+          }`}
+          title={isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+        >
+          {isFavorite ? "★" : "☆"}
+        </button>
 
-      <img
-        src={pokemon.sprites?.front_default || ""}
-        alt={pokemon.name}
-        className="w-28 h-28 object-contain my-2"
-      />
+        <span className="pokemon-id">
+          #{String(pokemon.id).padStart(3, "0")}
+        </span>
+      </div>
 
-      <h3 className="capitalize font-bold text-lg">{pokemon.name}</h3>
+      <div className="pokemon-sprite-wrapper">
+        <img
+          src={pokemon.sprites?.front_default || ""}
+          alt={pokemon.name}
+          className="pokemon-sprite"
+        />
+      </div>
 
-      <div className="flex gap-1 justify-center mt-2">
+      <h3 className="pokemon-name">{pokemon.name}</h3>
+
+      <div className="pokemon-types">
         {pokemon.types?.map((t) => (
-          <span
-            key={t.type.name}
-            className="text-xs px-2 py-0.5 bg-zinc-700 text-zinc-300 rounded-full capitalize"
-          >
+          <span key={t.type.name} className="type-badge">
             {t.type.name}
           </span>
         ))}

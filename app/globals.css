@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-/* Custom Pokédex Layout Styles */
 .pokedex-container {
   min-height: 100vh;
   padding: 2rem;
@@ -48,7 +47,6 @@
   }
 }
 
-/* Pokemon Card Component Styles */
 .pokemon-card {
   position: relative;
   display: flex;
@@ -130,7 +128,6 @@
   color: #d4d4d8;
 }
 
-/* Filter Controls Styles */
 .filter-container {
   display: flex;
   flex-direction: column;
@@ -201,7 +198,6 @@
   margin-bottom: 3rem;
 }
 
-/* Pagination Button Styles */
 .pagination-container {
   display: flex;
   justify-content: center;
@@ -231,7 +227,6 @@
   cursor: not-allowed;
 }
 
-/* Modal Backdrop & Container Styles */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -279,7 +274,6 @@
   color: #ffffff;
 }
 
-/* Modal Measurements Grid */
 .modal-metrics {
   display: flex;
   gap: 2rem;
@@ -304,7 +298,6 @@
   color: #a1a1aa;
 }
 
-/* Stats Progress Bars */
 .stats-container {
   width: 100%;
   display: flex;
@@ -386,7 +379,6 @@
   border-color: #71717a;
 }
 
-/* Compare Module Styles */
 .compare-container {
   display: flex;
   flex-direction: column;
@@ -427,7 +419,6 @@
   padding: 1rem;
 }
 
-/* Favorite Button Styles */
 .detail-header {
   display: flex;
   justify-content: space-between;

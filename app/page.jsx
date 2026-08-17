@@ -7,6 +7,7 @@ import { pokemonService } from "./services/fetchPokemon";
 import PokemonCard from "./components/pokemonCard";
 import PokemonDetail from "./components/pokemonDetails";
 import PokemonCompare from "./components/pokemonCompare";
+import Login from "./components/Login";
 
 export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
@@ -21,20 +22,36 @@ export default function Home() {
   const [showLogin, setShowLogin] = useState(false);
   const [user, setUser] = useState(null);
 
-  // Prevent hydration mismatch between server HTML and client initial state
+  // Restore stored user session and set mount status
   useEffect(() => {
     setIsMounted(true);
+    const storedUser = localStorage.getItem("pokedex_user");
+    if (storedUser) {
+      setUser(storedUser);
+    }
   }, []);
 
-  // Sync favorites from localStorage when selection changes
+  // Sync user-specific favorites from localStorage when selection OR user changes
   useEffect(() => {
     if (selectedType === "favorites") {
+      if (!user) {
+        setFavoritesList([]);
+        return;
+      }
+      // Use user-specific key instead of global "pokedex_favorites"
+      const storageKey = `pokedex_favorites_${user}`;
       const storedFavorites = JSON.parse(
-        localStorage.getItem("pokedex_favorites") || "[]"
+        localStorage.getItem(storageKey) || "[]"
       );
       setFavoritesList(storedFavorites);
     }
-  }, [selectedType]);
+  }, [selectedType, user]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("pokedex_user");
+    setUser(null);
+    setFavoritesList([]);
+  };
 
   const fetchGridData = useCallback(() => {
     if (selectedType === "favorites") return null;
@@ -85,7 +102,7 @@ export default function Home() {
             <div className="flex items-center gap-2">
               <span className="text-zinc-300 text-sm">👤 {user}</span>
               <button
-                onClick={() => setUser(null)}
+                onClick={handleLogout}
                 className="px-3 py-2 bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 rounded-lg text-zinc-400 text-sm"
               >
                 Logout
@@ -145,7 +162,9 @@ export default function Home() {
               ) : pokemonList.length === 0 ? (
                 <p className="no-results">
                   {selectedType === "favorites"
-                    ? "No favorites added yet!"
+                    ? user
+                      ? "No favorites added yet!"
+                      : "Log in to save and view your favorites!"
                     : "No Pokémon found."}
                 </p>
               ) : (
@@ -155,6 +174,7 @@ export default function Home() {
                       key={item.name}
                       name={item.name}
                       url={item.url}
+                      user={user}
                       onSelect={(name) => setSearchInput(name)}
                     />
                   ))}
@@ -188,6 +208,12 @@ export default function Home() {
           )}
         </>
       )}
+
+      <Login
+        isOpen={showLogin}
+        onClose={() => setShowLogin(false)}
+        onLoginSuccess={(loggedInUser) => setUser(loggedInUser)}
+      />
     </main>
   );
 }

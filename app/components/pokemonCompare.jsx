@@ -5,11 +5,9 @@ import { useDebounce } from "../hooks/useDebounce";
 import PokemonDetail from "./pokemonDetails";
 
 export default function PokemonCompare({ onClose }) {
-  // Input states for typed text
   const [input1, setInput1] = useState("");
   const [input2, setInput2] = useState("");
 
-  // Debounced values (delays update until typing pauses for 500ms)
   const debouncedPokemon1 = useDebounce(input1, 500);
   const debouncedPokemon2 = useDebounce(input2, 500);
 
@@ -26,7 +24,6 @@ export default function PokemonCompare({ onClose }) {
       </div>
 
       <div className="compare-grid">
-        {/* Left Slot */}
         <div className="compare-slot">
           <input
             type="text"
@@ -45,7 +42,6 @@ export default function PokemonCompare({ onClose }) {
           )}
         </div>
 
-        {/* Right Slot */}
         <div className="compare-slot">
           <input
             type="text"

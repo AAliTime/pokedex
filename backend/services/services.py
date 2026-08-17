@@ -2,7 +2,7 @@ import requests
 from fastapi import HTTPException
 from config import Settings
 
-settings = Settings()       #perdí 3 años de vida investigando cómo hacer esto
+settings = Settings()       #perdí 3 años de vida investigando cómo hacer esto porque nadie lo explica biennnnn
 API_URL = settings.API_URL.rstrip('/')
 
 
@@ -27,7 +27,3 @@ def formatPokemon(response) -> dict:
                    "sprite": pokemonAllData.get("sprites", {}).get("front_default")}
 
     return pokemonData
-
-
-
-#No me puedo creer que funcione dios mio
