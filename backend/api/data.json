@@ -1,0 +1,32 @@
+{
+    "users": [
+        {
+            "username": "string",
+            "password": "string"
+        },
+        {
+            "username": "help",
+            "password": "me"
+        },
+        {
+            "username": "god",
+            "password": "damnit"
+        },
+        {
+            "username": "Maria",
+            "password": "ujapprofe1"
+        },
+        {
+            "username": "ali",
+            "password": "ali2"
+        },
+        {
+            "username": "what",
+            "password": "que"
+        },
+        {
+            "username": "hatsune",
+            "password": "miku"
+        }
+    ]
+}
