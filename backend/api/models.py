@@ -7,4 +7,3 @@ class UserCreate(BaseModel):
 class UserResponse(BaseModel):
     username: str
     password: str
-

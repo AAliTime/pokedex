@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
-from api.models import UserCreate, UserResponse
+from backend.api.models import UserCreate, UserResponse
+from backend.services.services import formatPokemon, fetchPokemon
 import json
 
 app = FastAPI(
@@ -7,7 +8,7 @@ app = FastAPI(
     description="Pantalla de inicio de sesión y registro"
 )
 
-with open("api/data.json", "r") as jsonData:
+with open("backend/api/data.json", "r") as jsonData:
     data = json.load(jsonData)
 
 @app.get("/users/{username}")
@@ -18,10 +19,10 @@ def getUser(username: str):
         return data.get(username)
 
 @app.post("/register")
-def createUser(post: UserCreate) -> UserResponse:
-    newUser = {"username": post.username, "password": post.password}
+def createUser(credentials: UserCreate) -> UserResponse:
+    newUser = {"username": credentials.username, "password": credentials.password}
     data["users"].append(newUser)
-    with open("api/data.json", "w") as jsonData:
+    with open("backend/api/data.json", "w") as jsonData:
         json.dump(data, jsonData, indent=4)
     return newUser                  #type: ignore
 
@@ -37,18 +38,11 @@ subapp = FastAPI(
     title="Pokédex API",
     description="Información de todos los pokémon",
     version="3.0"
-)
+)        
 
-@subapp.get("/pokemon")
-def pokemon():
-    return {
-        "username": "{username}",
-        "id": "{id}",
-        "types": "{types}",
-        "stats": "{stats}",
-        "sprite": "{default_front}",
-    }
-
+@subapp.get("/{id}")
+def getPokemon(id: str):
+    return formatPokemon(fetchPokemon(id))     #wtffffff sí funciona qué bendición
 
 app.mount("/pokemon", subapp)
 
