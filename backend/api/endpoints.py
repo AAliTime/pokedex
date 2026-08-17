@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from backend.api.models import UserCreate, UserResponse
 from backend.services.services import formatPokemon, fetchPokemon
 import json
@@ -7,6 +8,17 @@ app = FastAPI(
     title="Inicio de sesión",
     description="Pantalla de inicio de sesión y registro"
 )
+
+origins = [
+    "http://localhost:3000"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],)
 
 with open("backend/api/data.json", "r") as jsonData:
     data = json.load(jsonData)
@@ -39,6 +51,13 @@ subapp = FastAPI(
     description="Información de todos los pokémon",
     version="3.0"
 )        
+
+subapp.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"])
 
 @subapp.get("/{id}")
 def getPokemon(id: str):
