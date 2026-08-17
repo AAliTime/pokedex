@@ -1,7 +1,12 @@
-import type { NextConfig } from "next";
+/** @type {import('next').NextConfig} */
 
-const nextConfig: NextConfig = {
-  /* config options here */
+// Increase default MaxListeners threshold for Node streams during dev bundling
+if (process.env.NODE_ENV === "development") {
+  require("events").EventEmitter.defaultMaxListeners = 25;
+}
+
+const nextConfig = {
+  /* your existing config */
 };
 
-export default nextConfig;
+module.exports = nextConfig;

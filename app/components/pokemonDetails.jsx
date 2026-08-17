@@ -1,80 +1,93 @@
 "use client";
 
-import { useState } from "react";
-import { useFetch } from "@/hooks/useFetch";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
-export default function PokemonDetail({ pokemonName }) {
-  const [isShiny, setIsShiny] = useState(false);
+export default function PokemonDetails({ pokemon, onClose }) {
+  const [mounted, setMounted] = useState(false);
 
-  const { data: pokemon, loading, error } = useFetch(
-    pokemonName ? `https://pokeapi.co/api/v2/pokemon/${pokemonName.toLowerCase()}` : null
-  );
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  if (!pokemonName) return null;
-  if (loading) return <p style={{ textAlign: "center" }}>Buscando Pokémon...</p>;
-  if (error || !pokemon) return <p style={{ textAlign: "center", color: "red" }}>Pokémon no encontrado</p>;
+  if (!pokemon || !mounted) return null;
 
-  // Selección de sprite e imagen usando if / else
-  let currentSprite;
-  if (isShiny) {
-    currentSprite = pokemon.sprites.front_shiny || pokemon.sprites.front_default;
-  } else {
-    currentSprite = pokemon.sprites.front_default;
-  }
+  const defaultSprite =
+    pokemon.sprites?.front_default ||
+    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png";
 
-  // Estilos y texto del botón con if / else
-  let buttonClass = "mt-2 px-3 py-1 text-xs rounded-full font-bold transition-colors ";
-  let buttonText = "";
+  const modalContent = (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close-btn" onClick={onClose}>
+          ✕
+        </button>
 
-  if (isShiny) {
-    buttonClass += "bg-yellow-400 text-black shadow";
-    buttonText = "✨ Shiny";
-  } else {
-    buttonClass += "bg-gray-200 text-gray-700 hover:bg-gray-300";
-    buttonText = "Normal";
-  }
-
-  return (
-    <div className="pokemonWrapper">
-      <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
-        <span style={{ color: "var(--text-wb)", fontWeight: "bold" }}>#{pokemon.id}</span>
-        <h2 style={{ textTransform: "capitalize", margin: 0 }}>{pokemon.name}</h2>
-      </div>
-
-      <div className="pokemonSpriteContainer" style={{ textAlign: "center" }}>
-        <img src={currentSprite} alt={pokemon.name} className="pokemonSprite" />
-        
-        <div>
-          <button
-            onClick={() => setIsShiny(!isShiny)}
-            className={buttonClass}
-          >
-            {buttonText}
-          </button>
+        <div className="pokemon-sprite-wrapper">
+          <img
+            src={defaultSprite}
+            alt={pokemon.name}
+            className="pokemon-sprite"
+          />
         </div>
-      </div>
 
-      <div className="pokemonTypes" style={{ marginTop: "1rem" }}>
-        {pokemon.types.map((t) => (
-          <span key={t.type.name} className="typeBadge">
-            {t.type.name}
-          </span>
-        ))}
-      </div>
+        <span className="pokemon-id">
+          #{String(pokemon.id || 0).padStart(3, "0")}
+        </span>
+        <h2 className="pokemon-name" style={{ fontSize: "1.5rem" }}>
+          {pokemon.name}
+        </h2>
 
-      <div className="pokemonStatsWrapper">
-        <h4 style={{ margin: "0 0 0.5rem 0", fontSize: "0.9rem", color: "var(--text-wb)" }}>
-          Estadísticas Base
-        </h4>
-        <div className="grid grid-cols-2 gap-2 text-left text-sm">
-          {pokemon.stats.map((s) => (
-            <div key={s.stat.name} className="flex justify-between border-b pb-1">
-              <span className="capitalize text-gray-400">{s.stat.name}:</span>
-              <span className="font-bold">{s.base_stat}</span>
-            </div>
+        {/* Types */}
+        <div className="pokemon-types">
+          {pokemon.types?.map((typeInfo) => (
+            <span key={typeInfo.type.name} className="type-badge">
+              {typeInfo.type.name}
+            </span>
           ))}
+        </div>
+
+        {/* Height and Weight */}
+        <div className="modal-metrics">
+          <div className="metric-item">
+            <span className="metric-value">
+              {pokemon.height ? pokemon.height / 10 : "-"} m
+            </span>
+            <span className="metric-label">Height</span>
+          </div>
+          <div className="metric-item">
+            <span className="metric-value">
+              {pokemon.weight ? pokemon.weight / 10 : "-"} kg
+            </span>
+            <span className="metric-label">Weight</span>
+          </div>
+        </div>
+
+        {/* Base Stats */}
+        <div className="stats-container">
+          {pokemon.stats ? (
+            pokemon.stats.map((s) => {
+              const percentage = Math.min(100, (s.base_stat / 200) * 100);
+              return (
+                <div key={s.stat.name} className="stat-row">
+                  <span className="stat-name">{s.stat.name}</span>
+                  <span className="stat-val">{s.base_stat}</span>
+                  <div className="stat-bar-bg">
+                    <div
+                      className="stat-bar-fill"
+                      style={{ width: `${percentage}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <p className="no-results">No stats available</p>
+          )}
         </div>
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }

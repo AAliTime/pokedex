@@ -3,7 +3,7 @@ from fastapi import HTTPException
 from config import Settings
 
 settings = Settings()       #perdí 3 años de vida investigando cómo hacer esto
-API_URL = settings.api_url.rstrip('/')
+API_URL = settings.API_URL.rstrip('/')
 
 
 def fetchPokemon(id: str):

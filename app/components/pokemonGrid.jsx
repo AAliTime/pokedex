@@ -1,67 +1,89 @@
 "use client";
 
 import { useState } from "react";
-import { useFetch } from "@/hooks/useFetch";
-import PokemonCard from "./PokemonCard";
-import TypeFilter from "./TypeFilter";
+import PokemonCard from "./pokemonCard";
+import PokemonFilter from "./pokemonFilter";
+import PokemonDetails from "./pokemonDetails"; // Note: lowercase 'p' in filename
+import { fetchPokemonPage } from "@/app/services/fetchPokemon";
 
-export default function PokemonGrid() {
-  const [offset, setOffset] = useState(0);
-  const [selectedType, setSelectedType] = useState("");
-  const limit = 20;
+export default function PokemonGrid({ initialPokemon }) {
+  const [pokemonList, setPokemonList] = useState(initialPokemon);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedType, setSelectedType] = useState("all");
+  const [selectedPokemon, setSelectedPokemon] = useState(null);
+  const [offset, setOffset] = useState(20);
+  const [loading, setLoading] = useState(false);
 
-  let url;
-  if (selectedType) {
-    url = `https://pokeapi.co/api/v2/type/${selectedType}`;
-  } else {
-    url = `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`;
-  }
+  const filteredPokemon = pokemonList.filter((pokemon) => {
+    const matchesSearch = pokemon.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
 
-  const { data, loading, error } = useFetch(url);
+    const matchesType =
+      selectedType === "all" ||
+      pokemon.types?.some((typeInfo) => typeInfo.type.name === selectedType);
 
-let pokemonList;
-if (selectedType) {
-  pokemonList = data?.pokemon?.slice(0, 20).map((p) => p.pokemon);
-} else {
-  pokemonList = data?.results;
-}
+    return matchesSearch && matchesType;
+  });
 
-  const handleTypeChange = (type) => {
-    setSelectedType(type);
-    setOffset(0);
+  const handleLoadMore = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchPokemonPage(20, offset);
+      setPokemonList((prev) => [...prev, ...data.results]);
+      setOffset((prevOffset) => prevOffset + 20);
+    } catch (err) {
+      console.error("Failed to load more Pokémon:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="my-6">
-      <TypeFilter selectedType={selectedType} onSelectType={handleTypeChange} />
+    <div>
+      <PokemonFilter
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        selectedType={selectedType}
+        setSelectedType={setSelectedType}
+      />
 
-      {loading && <p className="text-center my-4">Cargando lista...</p>}
-      {error && <p className="text-red-500 text-center my-4">Error: {error}</p>}
+      {filteredPokemon.length === 0 ? (
+        <p className="no-results">
+          No Pokémon found matching your criteria.
+        </p>
+      ) : (
+        <>
+          <div className="pokedex-grid">
+            {filteredPokemon.map((pokemon) => (
+              <PokemonCard
+                key={pokemon.id || pokemon.name}
+                pokemon={pokemon}
+                onSelect={(p) => setSelectedPokemon(p)}
+              />
+            ))}
+          </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {pokemonList?.map((item) => (
-          <PokemonCard key={item.name} url={item.url} />
-        ))}
-      </div>
+          {searchQuery === "" && selectedType === "all" && (
+            <div className="pagination-container">
+              <button
+                onClick={handleLoadMore}
+                disabled={loading}
+                className="load-more-btn"
+              >
+                {loading ? "Loading..." : "Load More Pokémon"}
+              </button>
+            </div>
+          )}
+        </>
+      )}
 
-      {!selectedType && (
-        <div className="flex justify-between items-center mt-6">
-          <button
-            onClick={() => setOffset((prev) => Math.max(0, prev - limit))}
-            disabled={!data?.previous || loading}
-            className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-          >
-            Back
-          </button>
-          <span className="font-semibold">Página {offset / limit + 1}</span>
-          <button
-            onClick={() => setOffset((prev) => prev + limit)}
-            disabled={!data?.next || loading}
-            className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
+      {/* Render Modal */}
+      {selectedPokemon && (
+        <PokemonDetails
+          pokemon={selectedPokemon}
+          onClose={() => setSelectedPokemon(null)}
+        />
       )}
     </div>
   );

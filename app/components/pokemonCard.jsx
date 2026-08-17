@@ -1,25 +1,72 @@
 "use client";
 
-import { useFetch } from "@/hooks/useFetch";
+import { useState } from "react";
 
-export default function PokemonCard({ url, onSelect }) {
-  const { data: pokemon, loading } = useFetch(url);
+export default function PokemonCard({ pokemon, onSelect }) {
+  const [isShiny, setIsShiny] = useState(false);
 
-  if (loading || !pokemon) {
-    return <div className="pokemonCard">Cargando...</div>;
-  }
+  const defaultSprite = pokemon.sprites?.front_default || "/favicon.ico";
+  const shinySprite = pokemon.sprites?.front_shiny || defaultSprite;
+
+  const handleCardClick = (e) => {
+    e.stopPropagation();
+    console.log("Card clicked for:", pokemon.name);
+    if (onSelect) {
+      onSelect(pokemon);
+    }
+  };
 
   return (
-    <div className="pokemonCard" onClick={() => onSelect(pokemon.name)}>
-      <span style={{ fontSize: "0.8rem", opacity: 0.8 }}>#{pokemon.id}</span>
-      <img
-        src={pokemon.sprites.front_default}
-        alt={pokemon.name}
-        style={{ width: "80px", height: "80px" }}
-      />
-      <h3 style={{ textTransform: "capitalize", margin: "0.2rem 0", fontSize: "1.1rem" }}>
-        {pokemon.name}
-      </h3>
+    <div className="pokemon-card" onClick={handleCardClick}>
+      {/* Shiny Toggle Button */}
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsShiny(!isShiny);
+        }}
+        className={`shiny-btn ${isShiny ? "active" : ""}`}
+        title="Toggle Shiny Sprite"
+      >
+        ✨
+      </button>
+
+      {/* Pokémon Image */}
+      <div className="pokemon-sprite-wrapper">
+        <img
+          src={isShiny ? shinySprite : defaultSprite}
+          alt={pokemon.name}
+          className="pokemon-sprite"
+          onError={(e) => {
+            e.currentTarget.src =
+              "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png";
+          }}
+        />
+      </div>
+
+      {/* Info */}
+      <span className="pokemon-id">
+        #{String(pokemon.id || 0).padStart(3, "0")}
+      </span>
+      <h3 className="pokemon-name">{pokemon.name}</h3>
+
+      {/* Types */}
+      <div className="pokemon-types">
+        {pokemon.types?.map((typeInfo) => (
+          <span key={typeInfo.type.name} className="type-badge">
+            {typeInfo.type.name}
+          </span>
+        ))}
+      </div>
+
+      {/* Action Button */}
+      <button
+        type="button"
+        className="view-details-btn"
+        onClick={handleCardClick}
+      >
+        View Details
+      </button>
     </div>
   );
 }

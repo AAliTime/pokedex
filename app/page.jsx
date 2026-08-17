@@ -1,23 +1,17 @@
-'use client';
+import PokemonCard from "@/app/components/pokemonCard";
+import { fetchPokemonPage } from "@/app/services/fetchPokemon";
 
-import { useState, useEffect } from "react";
-import fetchPokemon from "./components/test.js";
+export default async function Home() {
+  const data = await fetchPokemonPage(20, 0);
 
-export default function Home() {
-  const [pokemon, setPokemon] = useState(null);
+  return (
+    <main className="pokedex-container">
+      <h1 className="pokedex-title">Pokédex</h1>
 
-  useEffect(() => {
-    async function loadData() {
-      const data = await fetchPokemon("absol");
-      setPokemon(data);
-    }
-    loadData();
-  }, []);
-return (
-    <main>
-      <div>
-        {/* Render formatted property once data arrives */}
-        <p>{pokemon ? pokemon.name : "Loading..."}</p>
+      <div className="pokedex-grid">
+        {data.results.map((pokemon) => (
+          <PokemonCard key={pokemon.id} pokemon={pokemon} />
+        ))}
       </div>
     </main>
   );

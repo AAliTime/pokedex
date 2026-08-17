@@ -1,25 +1,52 @@
 "use client";
 
-export default function TypeFilter({ selectedType, onSelectType }) {
+const POKEMON_TYPES = [
+  "all",
+  "normal",
+  "fire",
+  "water",
+  "grass",
+  "electric",
+  "ice",
+  "fighting",
+  "poison",
+  "ground",
+  "flying",
+  "psychic",
+  "bug",
+  "rock",
+  "ghost",
+  "dragon",
+  "steel",
+  "fairy",
+];
 
-  if (loading) return <p className="text-sm">Cargando tipos...</p>;
-  if (error) return null;
-
+export default function PokemonFilter({
+  searchQuery,
+  setSearchQuery,
+  selectedType,
+  setSelectedType,
+}) {
   return (
-    <div className="my-4 flex items-center gap-2">
-      <label htmlFor="type-select" className="font-semibold text-sm">
-        Filtrar por Tipo:
-      </label>
+    <div className="filter-container">
+      {/* Search Input */}
+      <input
+        type="text"
+        placeholder="Search Pokémon..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="filter-input"
+      />
+
+      {/* Type Dropdown */}
       <select
-        id="type-select"
         value={selectedType}
-        onChange={(e) => onSelectType(e.target.value)}
-        className="p-2 border rounded bg-white capitalize text-sm"
+        onChange={(e) => setSelectedType(e.target.value)}
+        className="filter-select"
       >
-        <option value="">Todos los tipos</option>
-        {data?.results?.map((t) => (
-          <option key={t.name} value={t.name}>
-            {t.name}
+        {POKEMON_TYPES.map((type) => (
+          <option key={type} value={type} className="capitalize">
+            {type === "all" ? "All Types" : type}
           </option>
         ))}
       </select>
